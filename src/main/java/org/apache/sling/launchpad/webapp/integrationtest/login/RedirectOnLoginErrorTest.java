@@ -24,6 +24,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
@@ -70,17 +74,56 @@ public class RedirectOnLoginErrorTest extends HttpTestBase {
     }
 
     /**
+     * fetch the forms login handler configuration to see if a custom login servlet has been configured
+     * and if so, use that path instead of the default login form path
+     *
+     * @return the custom login servlet url or null if none is configured
+     * @throws IOException
+     */
+    private String getCustomLoginPageUrl() throws IOException {
+        String loginPageUrl = null;
+        // check configuration fo the presence of a custom login page
+        //  and if so, use that path instead of the default login form path
+        final GetMethod get = new GetMethod(
+                HTTP_BASE_URL + "/system/console/configMgr/org.apache.sling.auth.form.FormAuthenticationHandler.json");
+        final int status = httpClient.executeMethod(get);
+        assertEquals(HttpServletResponse.SC_OK, status);
+        try (final JsonReader jsonReader = Json.createReader(get.getResponseBodyAsStream())) {
+            final JsonArray jsonArray = jsonReader.readArray();
+            if (!jsonArray.isEmpty()) {
+                final JsonObject jsonObject = jsonArray.getJsonObject(0);
+                final JsonObject propertiesObj = jsonObject.getJsonObject("properties");
+                if (propertiesObj != null) {
+                    final JsonObject loginFormCfg = propertiesObj.getJsonObject("form.login.form");
+                    if (loginFormCfg != null && loginFormCfg.getBoolean("is_set", false)) {
+                        final String jsonLoginFormPath = loginFormCfg.getString("value", null);
+                        if (jsonLoginFormPath != null) {
+                            loginPageUrl = HTTP_BASE_URL + jsonLoginFormPath;
+                        }
+                    }
+                }
+            }
+        }
+        return loginPageUrl;
+    }
+
+    /**
      * Test SLING-2165.  Login Error should redirect back to the referrer
      * login page.
      *
      * @throws Exception
      */
     public void testRedirectToLoginFormAfterLoginError() throws Exception {
+        String loginPageUrl = getCustomLoginPageUrl();
+        if (loginPageUrl == null) {
+            // fallback to the default
+            loginPageUrl = String.format("%s/system/sling/form/login", HTTP_BASE_URL);
+        }
+
         // login failure
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        List<NameValuePair> params = new ArrayList<>();
         params.add(new NameValuePair("j_username", "___bogus___"));
         params.add(new NameValuePair("j_password", "not_a_real_user"));
-        final String loginPageUrl = String.format("%s/system/sling/form/login", HTTP_BASE_URL);
         PostMethod post = (PostMethod) assertPostStatus(
                 HTTP_BASE_URL + "/j_security_check",
                 HttpServletResponse.SC_MOVED_TEMPORARILY,
