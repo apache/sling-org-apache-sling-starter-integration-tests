@@ -21,19 +21,19 @@ package org.apache.sling.launchpad.webapp.integrationtest.login;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.sling.commons.testing.integration.HttpTestBase;
+import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.osgi.OsgiConsoleClient;
 
 /** Test SLING-2165 Verify that redirect to the referring login form after login error works */
 public class RedirectOnLoginErrorTest extends HttpTestBase {
@@ -79,31 +79,22 @@ public class RedirectOnLoginErrorTest extends HttpTestBase {
      *
      * @return the custom login servlet url or null if none is configured
      * @throws IOException
+     * @throws ClientException
      */
-    private String getCustomLoginPageUrl() throws IOException {
+    private String getCustomLoginPageUrl() throws IOException, ClientException {
         String loginPageUrl = null;
-        // check configuration fo the presence of a custom login page
+
+        // check configuration for the presence of a custom login page
         //  and if so, use that path instead of the default login form path
-        final GetMethod get = new GetMethod(
-                HTTP_BASE_URL + "/system/console/configMgr/org.apache.sling.auth.form.FormAuthenticationHandler.json");
-        final int status = httpClient.executeMethod(get);
-        assertEquals(HttpServletResponse.SC_OK, status);
-        try (final JsonReader jsonReader = Json.createReader(get.getResponseBodyAsStream())) {
-            final JsonArray jsonArray = jsonReader.readArray();
-            if (!jsonArray.isEmpty()) {
-                final JsonObject jsonObject = jsonArray.getJsonObject(0);
-                final JsonObject propertiesObj = jsonObject.getJsonObject("properties");
-                if (propertiesObj != null) {
-                    final JsonObject loginFormCfg = propertiesObj.getJsonObject("form.login.form");
-                    if (loginFormCfg != null && loginFormCfg.getBoolean("is_set", false)) {
-                        final String jsonLoginFormPath = loginFormCfg.getString("value", null);
-                        if (jsonLoginFormPath != null) {
-                            loginPageUrl = HTTP_BASE_URL + jsonLoginFormPath;
-                        }
-                    }
-                }
+        try (OsgiConsoleClient osgiConsoleClient = new OsgiConsoleClient(URI.create(HTTP_BASE_URL), "admin", "admin")) {
+            final Map<String, Object> configuration = osgiConsoleClient.getConfiguration(
+                    "org.apache.sling.auth.form.FormAuthenticationHandler", HttpServletResponse.SC_OK);
+            final Object jsonLoginFormPath = configuration.get("form.login.form");
+            if (jsonLoginFormPath instanceof String) {
+                loginPageUrl = HTTP_BASE_URL + (String) jsonLoginFormPath;
             }
         }
+
         return loginPageUrl;
     }
 
