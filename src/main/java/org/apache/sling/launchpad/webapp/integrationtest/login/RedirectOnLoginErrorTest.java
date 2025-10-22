@@ -21,8 +21,10 @@ package org.apache.sling.launchpad.webapp.integrationtest.login;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
@@ -30,6 +32,8 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.sling.commons.testing.integration.HttpTestBase;
+import org.apache.sling.testing.clients.ClientException;
+import org.apache.sling.testing.clients.osgi.OsgiConsoleClient;
 
 /** Test SLING-2165 Verify that redirect to the referring login form after login error works */
 public class RedirectOnLoginErrorTest extends HttpTestBase {
@@ -70,17 +74,47 @@ public class RedirectOnLoginErrorTest extends HttpTestBase {
     }
 
     /**
+     * fetch the forms login handler configuration to see if a custom login servlet has been configured
+     * and if so, use that path instead of the default login form path
+     *
+     * @return the custom login servlet url or null if none is configured
+     * @throws IOException
+     * @throws ClientException
+     */
+    private String getCustomLoginPageUrl() throws IOException, ClientException {
+        String loginPageUrl = null;
+
+        // check configuration for the presence of a custom login page
+        //  and if so, use that path instead of the default login form path
+        try (OsgiConsoleClient osgiConsoleClient = new OsgiConsoleClient(URI.create(HTTP_BASE_URL), "admin", "admin")) {
+            final Map<String, Object> configuration = osgiConsoleClient.getConfiguration(
+                    "org.apache.sling.auth.form.FormAuthenticationHandler", HttpServletResponse.SC_OK);
+            final Object jsonLoginFormPath = configuration.get("form.login.form");
+            if (jsonLoginFormPath instanceof String) {
+                loginPageUrl = HTTP_BASE_URL + (String) jsonLoginFormPath;
+            }
+        }
+
+        return loginPageUrl;
+    }
+
+    /**
      * Test SLING-2165.  Login Error should redirect back to the referrer
      * login page.
      *
      * @throws Exception
      */
     public void testRedirectToLoginFormAfterLoginError() throws Exception {
+        String loginPageUrl = getCustomLoginPageUrl();
+        if (loginPageUrl == null) {
+            // fallback to the default
+            loginPageUrl = String.format("%s/system/sling/form/login", HTTP_BASE_URL);
+        }
+
         // login failure
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        List<NameValuePair> params = new ArrayList<>();
         params.add(new NameValuePair("j_username", "___bogus___"));
         params.add(new NameValuePair("j_password", "not_a_real_user"));
-        final String loginPageUrl = String.format("%s/system/sling/form/login", HTTP_BASE_URL);
         PostMethod post = (PostMethod) assertPostStatus(
                 HTTP_BASE_URL + "/j_security_check",
                 HttpServletResponse.SC_MOVED_TEMPORARILY,
