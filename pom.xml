@@ -63,7 +63,7 @@
         <!-- Content-type for readiness check -->
         <launchpad.readiness.mediatype>.txt:text/plain</launchpad.readiness.mediatype>
 
-        <jackrabbit.version>2.16.3</jackrabbit.version>
+        <jackrabbit.version>2.22.2</jackrabbit.version>
 
         <javadoc.excludePackageNames>org.apache.sling.*</javadoc.excludePackageNames>
     </properties>
