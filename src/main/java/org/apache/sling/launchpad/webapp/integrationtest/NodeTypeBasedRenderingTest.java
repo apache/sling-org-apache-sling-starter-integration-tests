@@ -27,7 +27,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /** Test rendering resources based on their JCR node type */
 public class NodeTypeBasedRenderingTest extends RenderingTestBase {
-    public static final String TEST_PATH = "/testing/" + NodeTypeBasedRenderingTest.class.getSimpleName();
+    public static final String TEST_PATH =
+            "/testing/" + NodeTypeBasedRenderingTest.class.getSimpleName() + "/" + System.currentTimeMillis();
     private String testNodeUrl;
     private List<String> toDelete = new ArrayList<String>();
     private static AtomicInteger counter = new AtomicInteger();
