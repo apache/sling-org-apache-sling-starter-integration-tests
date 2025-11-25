@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
 import org.apache.sling.servlets.post.SlingPostConstants;
 
 /** Test creating a Node and rendering it using scripts in
@@ -40,15 +41,17 @@ public class NodetypeRenderingTest extends RenderingTestBase {
         testText = "This is a test " + System.currentTimeMillis();
 
         // create the test node, under a path that's specific to this class to allow collisions
+        UniqueResourceType urt = new UniqueResourceType();
         secondFolderOfContentPath = "" + System.currentTimeMillis();
         final String url = HTTP_BASE_URL + "/" + getClass().getSimpleName() + "/" + secondFolderOfContentPath
                 + SlingPostConstants.DEFAULT_CREATE_SUFFIX;
         final Map<String, String> props = new HashMap<String, String>();
+        props.put("sling:resourceType", urt.getResourceType());
         props.put("text", testText);
         displayUrl = testClient.createNode(url, props);
 
         // the rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         testClient.mkdirs(WEBDAV_BASE_URL, scriptPath);
     }
 

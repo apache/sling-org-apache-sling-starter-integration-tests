@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
+
 /** GET requests with a suffix should fail with a 404, otherwise
  *  we get a lot of extra possible URLs which point to the same
  *  content.
@@ -38,13 +40,15 @@ public class GetWithSuffixTest extends RenderingTestBase {
         testText = "This is a test " + System.currentTimeMillis();
 
         // create the test node, under a path that's specific to this class to allow collisions
+        UniqueResourceType urt = new UniqueResourceType();
         final String url = HTTP_BASE_URL + "/" + getClass().getSimpleName() + "_" + System.currentTimeMillis();
         final Map<String, String> props = new HashMap<String, String>();
+        props.put("sling:resourceType", urt.getResourceType());
         props.put("text", testText);
         displayUrl = testClient.createNode(url, props);
 
         // the rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         testClient.mkdirs(WEBDAV_BASE_URL, scriptPath);
     }
 
