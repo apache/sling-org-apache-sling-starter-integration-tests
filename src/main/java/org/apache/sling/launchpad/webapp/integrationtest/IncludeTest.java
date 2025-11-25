@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.sling.commons.testing.integration.HttpTestBase;
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
 import org.apache.sling.servlets.post.SlingPostConstants;
 
 /** Test the {link ScriptHelper#include) functionality */
@@ -52,7 +53,9 @@ public class IncludeTest extends HttpTestBase {
         final Map<String, String> props = new HashMap<String, String>();
 
         // Create two test nodes and store their paths
+        UniqueResourceType urt = new UniqueResourceType();
         testTextA = "Text A " + System.currentTimeMillis();
+        props.put("sling:resourceType", urt.getResourceType());
         props.put("text", testTextA);
         nodeUrlA = testClient.createNode(url, props);
         String pathToInclude = nodeUrlA.substring(HTTP_BASE_URL.length());
@@ -86,7 +89,7 @@ public class IncludeTest extends HttpTestBase {
         toDelete.add(uploadTestScript(scriptPath, "include-forced.esp", "html.esp"));
 
         // The main rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         testClient.mkdirs(WEBDAV_BASE_URL, scriptPath);
         toDelete.add(uploadTestScript(scriptPath, "include-test.esp", "html.esp"));
     }

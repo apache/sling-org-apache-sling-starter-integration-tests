@@ -28,6 +28,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.sling.commons.testing.integration.HttpTest;
 import org.apache.sling.commons.testing.junit.Retry;
 import org.apache.sling.commons.testing.junit.RetryRule;
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
 import org.apache.sling.servlets.post.SlingPostConstants;
 import org.junit.After;
 import org.junit.Before;
@@ -68,7 +69,9 @@ public class JspForwardTest {
         final Map<String, String> props = new HashMap<String, String>();
 
         // Create two test nodes and store their paths
+        UniqueResourceType urt = new UniqueResourceType();
         testTextA = "Text A " + System.currentTimeMillis();
+        props.put("sling:resourceType", urt.getResourceType());
         props.put("text", testTextA);
         nodeUrlA = H.getTestClient().createNode(url, props);
         String pathToInclude = nodeUrlA.substring(HttpTest.HTTP_BASE_URL.length());
@@ -108,7 +111,7 @@ public class JspForwardTest {
         toDelete.add(H.uploadTestScript(scriptPath, "forward-forced.jsp", "html.jsp"));
 
         // The main rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         H.getTestClient().mkdirs(HttpTest.WEBDAV_BASE_URL, scriptPath);
         toDelete.add(H.uploadTestScript(scriptPath, "forward-test.jsp", "html.jsp"));
     }

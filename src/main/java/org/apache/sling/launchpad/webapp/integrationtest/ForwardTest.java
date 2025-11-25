@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.sling.commons.testing.integration.HttpTestBase;
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
 import org.apache.sling.servlets.post.SlingPostConstants;
 
 /** Test the {link ScriptHelper#forward) functionality */
@@ -48,12 +49,14 @@ public class ForwardTest extends HttpTestBase {
 
         // Create the test nodes under a path that's specific to this class to
         // allow collisions
+        UniqueResourceType urt = new UniqueResourceType();
         final String url = HTTP_BASE_URL + "/" + getClass().getSimpleName() + "/" + System.currentTimeMillis()
                 + SlingPostConstants.DEFAULT_CREATE_SUFFIX;
         final Map<String, String> props = new HashMap<String, String>();
 
         // Create two test nodes and store their paths
         testTextA = "Text A " + System.currentTimeMillis();
+        props.put("sling:resourceType", urt.getResourceType());
         props.put("text", testTextA);
         nodeUrlA = testClient.createNode(url, props);
         String pathToInclude = nodeUrlA.substring(HTTP_BASE_URL.length());
@@ -87,7 +90,7 @@ public class ForwardTest extends HttpTestBase {
         toDelete.add(uploadTestScript(scriptPath, "forward-forced.esp", "html.esp"));
 
         // The main rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         testClient.mkdirs(WEBDAV_BASE_URL, scriptPath);
         toDelete.add(uploadTestScript(scriptPath, "forward-test.esp", "html.esp"));
     }

@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.sling.commons.testing.integration.HttpTestBase;
+import org.apache.sling.launchpad.webapp.integrationtest.util.UniqueResourceType;
 import org.apache.sling.servlets.post.SlingPostConstants;
 
 /**
@@ -35,6 +36,8 @@ import org.apache.sling.servlets.post.SlingPostConstants;
  * ScriptHelper#include) functionality
  */
 public class RequestAttributeTest extends HttpTestBase {
+
+    private UniqueResourceType urt = new UniqueResourceType();
 
     private String nodeUrlA;
 
@@ -57,16 +60,16 @@ public class RequestAttributeTest extends HttpTestBase {
 
         // Create two test nodes and store their paths
         props.put("text", "texta");
-        props.put("jcr:primaryType", "nt:unstructured");
+        props.put("sling:resourceType", urt.getResourceType());
         nodeUrlA = testClient.createNode(url, props);
 
         props.clear();
         props.put("text", "textb");
-        props.put("jcr:primaryType", "nt:unstructured");
+        props.put("sling:resourceType", urt.getResourceType());
         nodeUrlB = testClient.createNode(nodeUrlA + "/child", props);
 
         // The main rendering script goes under /apps in the repository
-        scriptPath = "/apps/nt/unstructured";
+        scriptPath = urt.getScriptPath();
         testClient.mkdirs(WEBDAV_BASE_URL, scriptPath);
         toDelete.add(uploadTestScript(scriptPath, "request-attribute-test.esp", "txt.esp"));
         toDelete.add(uploadTestScript(scriptPath, "request-attribute-test-sel1.esp", "sel1.txt.esp"));
@@ -98,17 +101,17 @@ public class RequestAttributeTest extends HttpTestBase {
         assertEquals("Request Resource 1 is null", "null", props.get("resource01"));
 
         // this is from sel1.txt.esp, included by txt.esp
-        assertEquals("Request Servlet 10", "/apps/nt/unstructured/txt.esp", props.get("servlet10"));
+        assertEquals("Request Servlet 10", urt.getScriptPath() + "/txt.esp", props.get("servlet10"));
         assertEquals("Request Resource 10", pA, props.get("resource10"));
-        assertEquals("Request Servlet 11", "/apps/nt/unstructured/txt.esp", props.get("servlet11"));
+        assertEquals("Request Servlet 11", urt.getScriptPath() + "/txt.esp", props.get("servlet11"));
         assertEquals("Request Resource 11", pA, props.get("resource11"));
 
         // this is from sel2.txt.esp, included by txt.esp
-        assertEquals("Request Servlet 20", "/apps/nt/unstructured/txt.esp", props.get("servlet20"));
+        assertEquals("Request Servlet 20", urt.getScriptPath() + "/txt.esp", props.get("servlet20"));
         assertEquals("Request Resource 20", pA, props.get("resource20"));
 
         // this is from sel3.txt.esp, included by sel1.txt.esp
-        assertEquals("Request Servlet 30", "/apps/nt/unstructured/sel1.txt.esp", props.get("servlet30"));
+        assertEquals("Request Servlet 30", urt.getScriptPath() + "/sel1.txt.esp", props.get("servlet30"));
         assertEquals("Request Resource 30", pB, props.get("resource30"));
     }
 }
