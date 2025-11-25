@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.servlets;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import java.io.IOException;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+import org.apache.sling.commons.testing.integration.HttpTestBase;
+
+/**
+ * Test class which validates that the <tt>R6WhiteboardServlet</tt> is registered
+ *
+ */
+public class R6WhiteboardServletTest extends HttpTestBase {
+
+    public void testGetServletContent() throws IOException {
+
+        String content = getContent(HTTP_BASE_URL + "/whiteboard_r6", CONTENT_TYPE_PLAIN);
+
+        assertEquals("R6 OK", content);
+    }
+}
