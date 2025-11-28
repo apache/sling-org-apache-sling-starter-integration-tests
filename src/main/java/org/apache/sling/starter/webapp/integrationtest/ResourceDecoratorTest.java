@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import org.apache.sling.commons.testing.integration.HttpTestBase;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+public class ResourceDecoratorTest extends HttpTestBase {
+
+    public void testDecoratedResource() throws Exception {
+        final String path = "/testing/TestResourceDecorator/resource" + System.currentTimeMillis();
+        final TestNode tn = new TestNode(HTTP_BASE_URL + path, null);
+        final String content = getContent(tn.nodeUrl + ".txt", CONTENT_TYPE_PLAIN);
+        final String expect = "TEST_RESOURCE_DECORATOR_RESOURCE_TYPE";
+        assertTrue("Expecting content to contain " + expect + " (" + content + ")", content.contains(expect));
+    }
+}

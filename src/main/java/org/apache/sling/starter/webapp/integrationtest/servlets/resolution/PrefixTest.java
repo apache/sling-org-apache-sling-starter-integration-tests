@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.servlets.resolution;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+/** Verify that PrefixServletZero overrides PrefixServletMinusOne */
+public class PrefixTest extends ResolutionTestBase {
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+    public void testPrefixServletZeroPresent() throws Exception {
+        assertServlet(getContent(testNodeNORT.nodeUrl + ".TEST_EXT_5", CONTENT_TYPE_PLAIN), PREFIX_0_SERVLET_SUFFIX);
+    }
+
+    public void testPrefixServletMinusOnePresent() throws Exception {
+        assertServlet(getContent(testNodeNORT.nodeUrl + ".TEST_EXT_4", CONTENT_TYPE_PLAIN), PREFIX_M1_SERVLET_SUFFIX);
+    }
+
+    public void testPrefixServletZeroWins() throws Exception {
+        assertServlet(getContent(testNodeNORT.nodeUrl + ".TEST_EXT_3", CONTENT_TYPE_PLAIN), PREFIX_0_SERVLET_SUFFIX);
+    }
+}

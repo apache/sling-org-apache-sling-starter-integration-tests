@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import org.apache.sling.commons.testing.integration.HttpTestBase;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+/** Verify that the test config is installed */
+public class LaunchpadConfigInstallerTest extends HttpTestBase {
+    public void testConfigPresent() throws Exception {
+        final String url = HTTP_BASE_URL + "/testing/GetConfigServlet.tidy.json/integrationTestsConfig";
+        final String json = getContent(url, CONTENT_TYPE_JSON);
+        final String expectMessage = "This test config should be loaded at startup";
+        final String code = "out.print(data.properties.message)";
+        assertJavascript(expectMessage, json, code);
+    }
+}

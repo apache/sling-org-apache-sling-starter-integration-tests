@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.servlets.resolution;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+/** Test the ExtensionServlet */
+public class ExtensionServletTest extends ResolutionTestBase {
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+    public void testExtensionOne() throws Exception {
+        assertServlet(getContent(testNodeNORT.nodeUrl + ".TEST_EXT_1", CONTENT_TYPE_PLAIN), EXT_SERVLET_SUFFIX);
+    }
+
+    public void testExtensionTwo() throws Exception {
+        assertServlet(getContent(testNodeNORT.nodeUrl + ".TEST_EXT_2", CONTENT_TYPE_PLAIN), EXT_SERVLET_SUFFIX);
+    }
+
+    public void testExtensionOther() throws Exception {
+        assertNotTestServlet(getContent(testNodeNORT.nodeUrl + ".txt", CONTENT_TYPE_PLAIN));
+    }
+}

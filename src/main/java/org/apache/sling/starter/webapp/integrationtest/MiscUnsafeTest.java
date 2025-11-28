@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import java.io.IOException;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+import org.apache.sling.commons.testing.integration.HttpTestBase;
+
+/**
+ * The <tt>MiscUnsafeTest</tt> verifies that the <tt>sun.misc.Unsafe</tt> class can be loaded
+ *
+ */
+public class MiscUnsafeTest extends HttpTestBase {
+
+    public void testSunMiscUnsafeIsLoaded() throws IOException {
+
+        String content = getContent(HTTP_BASE_URL + "/bin/miscUnsafe.txt", CONTENT_TYPE_PLAIN);
+
+        assertTrue("Response did not start with sun.misc:\n" + content, content.startsWith("sun.misc"));
+    }
+}
