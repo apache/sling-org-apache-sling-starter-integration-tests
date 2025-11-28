@@ -24,19 +24,19 @@
         <relativePath />
     </parent>
 
-    <artifactId>org.apache.sling.launchpad.integration-tests</artifactId>
+    <artifactId>org.apache.sling.starter.integration-tests</artifactId>
     <version>14-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Apache Sling Launchpad Integration Tests</name>
+    <name>Apache Sling Starter Integration Tests</name>
     <description>Sling Integration Tests, contains integration tests that
         are used by the testing project and other upstream testing projects.</description>
 
     <scm>
-        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-integration-tests.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-integration-tests.git</developerConnection>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-starter-integration-tests.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-starter-integration-tests.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/apache/sling-org-apache-sling-launchpad-integration-tests.git</url>
+        <url>https://github.com/apache/sling-org-apache-sling-starter-integration-tests.git</url>
     </scm>
 
     <properties>
@@ -296,7 +296,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.launchpad.test-services</artifactId>
+            <artifactId>org.apache.sling.starter.test-services</artifactId>
             <version>14-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

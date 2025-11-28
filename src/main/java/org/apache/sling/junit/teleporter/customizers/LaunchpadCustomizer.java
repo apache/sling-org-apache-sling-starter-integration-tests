@@ -20,7 +20,7 @@ package org.apache.sling.junit.teleporter.customizers;
 
 import org.apache.sling.commons.testing.integration.HttpTest;
 import org.apache.sling.junit.rules.TeleporterRule;
-import org.apache.sling.launchpad.webapp.integrationtest.teleporter.TeleporterOptionsTest;
+import org.apache.sling.starter.webapp.integrationtest.teleporter.TeleporterOptionsTest;
 import org.apache.sling.testing.teleporter.client.ClientSideTeleporter;
 
 import static org.junit.Assert.fail;
@@ -54,14 +54,14 @@ public class LaunchpadCustomizer implements TeleporterRule.Customizer {
         final ClientSideTeleporter cst = (ClientSideTeleporter) t;
         cst.setBaseUrl(HttpTest.HTTP_BASE_URL);
         cst.setTestReadyTimeoutSeconds(testReadyTimeout);
-        cst.includeDependencyPrefix("org.apache.sling.launchpad.webapp");
+        cst.includeDependencyPrefix("org.apache.sling.starter.webapp");
 
         // Get the testservices classes from that bundle, importing them
-        cst.includeDependencyPrefix("org.apache.sling.launchpad.testservices");
-        cst.excludeDependencyPrefix(org.apache.sling.launchpad.testservices.events.EventsCounter.class
+        cst.includeDependencyPrefix("org.apache.sling.starter.testservices");
+        cst.excludeDependencyPrefix(org.apache.sling.starter.testservices.events.EventsCounter.class
                 .getPackage()
                 .getName());
-        cst.excludeDependencyPrefix(org.apache.sling.launchpad.testservices.exported.StringTransformer.class.getName());
+        cst.excludeDependencyPrefix(org.apache.sling.starter.testservices.exported.StringTransformer.class.getName());
 
         cst.setServerCredentials("admin", "admin");
     }

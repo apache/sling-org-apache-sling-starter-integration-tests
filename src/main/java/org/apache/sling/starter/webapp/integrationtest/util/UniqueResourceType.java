@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.util;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import java.util.UUID;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+/**
+ * Use a unique resource type for each unit test to avoid interference (SLING-12600).
+ */
+public class UniqueResourceType {
+
+    private final String uid = UUID.randomUUID().toString();
+
+    public String getResourceType() {
+        return "test/rt-" + uid;
+    }
+
+    public String getScriptPath() {
+        return "/apps/" + getResourceType();
+    }
+}

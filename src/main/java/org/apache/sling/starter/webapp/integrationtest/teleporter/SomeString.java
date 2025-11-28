@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.teleporter;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
-
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+/** POJO used indirectly by RequiredDependenciesTest */
+public class SomeString {
+    @Override
+    public String toString() {
+        return "ok";
+    }
+}

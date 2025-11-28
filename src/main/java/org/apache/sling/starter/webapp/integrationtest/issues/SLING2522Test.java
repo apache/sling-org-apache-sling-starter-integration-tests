@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.issues;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import org.apache.sling.commons.testing.integration.HttpTestBase;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+public class SLING2522Test extends HttpTestBase {
+
+    public void testThatServicesWhichLikeAdapterFactoriesArentShowInTheW() throws Exception {
+        String content = getContent(HTTP_BASE_URL + "/system/console/adapters", "text/html");
+        assertFalse("page contains wrong class", content.contains("something_which_shouldnt_appear"));
+        assertTrue("page doesn't contain correct class", content.contains("something_which_should_appear"));
+    }
+}

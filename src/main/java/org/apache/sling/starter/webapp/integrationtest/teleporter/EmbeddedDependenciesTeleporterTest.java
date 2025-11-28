@@ -1,4 +1,3 @@
-<%--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,17 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
---%>
-<%@page 
-  session="false"
-  contentType="text/plain"
-  import="org.apache.sling.starter.testservices.exported.TestEnum"
-%>
+package org.apache.sling.starter.webapp.integrationtest.teleporter;
 
-1) FOO=<%
-  out.println(TestEnum.parse("this contains foo.").toString());
-%>
+import java.io.IOException;
 
-2) BAR=<%
-  out.println(TestEnum.BAR.toString());
-%>
+import org.apache.sling.junit.rules.TeleporterRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+/** Verify that the teleporter correctly embeds additional
+ *  classes that this test requires, even if they are
+ *  referred to indirectly.
+ */
+public class EmbeddedDependenciesTeleporterTest {
+
+    @Rule
+    public final TeleporterRule teleporter = TeleporterRule.forClass(getClass(), "Launchpad");
+
+    @Test
+    public void testSum() throws IOException {
+        assertEquals(84, new SomeUtility().getSum());
+    }
+
+    @Test
+    public void testOk() {
+        assertEquals("okok", new SomeUtility().getOk());
+    }
+}
