@@ -298,7 +298,7 @@
         <dependency>
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.starter.test-services</artifactId>
-            <version>14-SNAPSHOT</version>
+            <version>14</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
