@@ -89,4 +89,25 @@ public class HtlTest extends HttpTestBase {
 
         assertTrue("Expected content to contain 'from-sling-model'", content.contains("from-sling-model"));
     }
+
+    public void testScriptWithAdapterFactoryFromJavaxServlet() throws IOException {
+
+        testClient.mkdirs(HTTP_BASE_URL, "/apps/sling/test/htl/requesthashcode");
+        testClient.mkdirs(HTTP_BASE_URL, "/content/htl");
+
+        testClient.upload(
+                HTTP_BASE_URL + "/apps/sling/test/htl/requesthashcode/requesthashcode.html",
+                getClass().getResourceAsStream("/integration-test/htl/requesthashcode.html"));
+
+        testClient.createNode(
+                HTTP_BASE_URL + "/content/htl/request-hashcode",
+                Collections.singletonMap("sling:resourceType", "sling/test/htl/requesthashcode"));
+
+        String content =
+                getContent(HTTP_BASE_URL + "/content/htl/request-hashcode.html", CONTENT_TYPE_DONTCARE, null, 200);
+
+        assertTrue(
+                "Expected content to contain 'Request hash code:' followed by a hash code",
+                content.matches("(?s).*Request hash code:\\s*\\d+.*"));
+    }
 }
