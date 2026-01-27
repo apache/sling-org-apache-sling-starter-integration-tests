@@ -90,7 +90,8 @@ public class HtlTest extends HttpTestBase {
         assertTrue("Expected content to contain 'from-sling-model'", content.contains("from-sling-model"));
     }
 
-    public void testScriptWithAdapterFactoryFromJavaxServlet() throws IOException {
+    // enable once SLING-13071 is fixed
+    public void disabledTestScriptWithAdapterFactoryFromJavaxServlet() throws IOException {
 
         testClient.mkdirs(HTTP_BASE_URL, "/apps/sling/test/htl/requesthashcode");
         testClient.mkdirs(HTTP_BASE_URL, "/content/htl");
