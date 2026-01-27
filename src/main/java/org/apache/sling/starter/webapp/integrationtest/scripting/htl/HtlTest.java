@@ -126,4 +126,20 @@ public class HtlTest extends HttpTestBase {
 
         assertTrue("Expected content to contain 'from-sling-model'", content.contains("from-sling-model"));
     }
+
+    // enabled once SLING-13070 is fixed
+    public void testBundledScriptBindingsForRequest() throws IOException {
+
+        testClient.mkdirs(HTTP_BASE_URL, "/content/htl");
+
+        testClient.createNode(
+                HTTP_BASE_URL + "/content/htl/bundled-script-with-binding",
+                Collections.singletonMap("sling:resourceType", "sling/bundled-scripts/expressions"));
+
+        String content = getContent(
+                        HTTP_BASE_URL + "/content/htl/bundled-script-with-binding.html", CONTENT_TYPE_HTML, null, 200)
+                .trim();
+
+        assertEquals("<p>Included output</p>", content);
+    }
 }

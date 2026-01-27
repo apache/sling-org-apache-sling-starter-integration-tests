@@ -18,7 +18,10 @@
  */
 package org.apache.sling.starter.webapp.integrationtest;
 
+import java.util.Map;
+
 import org.apache.sling.commons.testing.integration.HttpTest;
+import org.apache.sling.commons.testing.integration.HttpTestBase;
 import org.apache.sling.commons.testing.integration.HttpTestNode;
 import org.apache.sling.commons.testing.junit.Retry;
 import org.apache.sling.commons.testing.junit.RetryRule;
@@ -29,6 +32,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /** Test JSP scripting
@@ -185,6 +189,18 @@ public class JspScriptingTest {
                 H.getTestClient().delete(toDelete);
             }
         }
+    }
+
+    @Test
+    public void testBundledScript() throws Exception {
+        String resourcePath = testRootUrl + "/bundled-script-resource";
+
+        H.getTestClient().createNode(resourcePath, Map.of("sling:resourceType", "sling/bundled-scripts/simple"));
+
+        String content = H.getContent(resourcePath + ".html", HttpTestBase.CONTENT_TYPE_HTML)
+                .trim();
+
+        assertEquals("bundled script contents", "bundled script", content);
     }
 
     private void checkContent(final HttpTestNode tn) throws Exception {
