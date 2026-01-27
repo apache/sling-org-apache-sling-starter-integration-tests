@@ -111,4 +111,19 @@ public class HtlTest extends HttpTestBase {
                 "Expected content to contain 'Request hash code:' followed by a hash code",
                 content.matches("(?s).*Request hash code:\\s*\\d+.*"));
     }
+
+    // enabled once SLING-13077 is fixed
+    public void disabledTestSlingModelExporterFromJavaxServlet() throws IOException {
+
+        testClient.mkdirs(HTTP_BASE_URL, "/content/htl");
+
+        testClient.createNode(
+                HTTP_BASE_URL + "/content/htl/model-use-bean",
+                Collections.singletonMap("sling:resourceType", "sling/test/htl/model"));
+
+        String content =
+                getContent(HTTP_BASE_URL + "/content/htl/model-use-bean.model.json", CONTENT_TYPE_DONTCARE, null, 200);
+
+        assertTrue("Expected content to contain 'from-sling-model'", content.contains("from-sling-model"));
+    }
 }
